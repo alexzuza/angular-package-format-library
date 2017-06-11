@@ -1,0 +1,22 @@
+{
+  "name": "@zuz/library",
+  "version": "0.0.1",
+  "description": "Angular Library",
+  "main": "./bundles/lib.umd.js",
+  "module": "./@zuz/lib.es5.js",
+  "es2015": "./@zuz/lib.js",
+  "typings": "./lib.d.ts",
+
+  "keywords": [
+    "angular",
+    "library"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/core": "4.2.1",
+    "@angular/common": "4.2.1"
+  },
+  "dependencies": {
+    "tslib": "^1.7.1"
+  }
+}

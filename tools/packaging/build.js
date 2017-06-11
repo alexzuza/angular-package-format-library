@@ -1,16 +1,10 @@
 const path = require('path');
 const config = require('../../build-config');
+const { writeFileSync } = require('fs');
+const inlinePackageMetadataFiles = require('./metadata-inlining');
+const addPureAnnotationsToFile = require('./pure-annotations');
 
-/*
-import {addPureAnnotationsToFile} from './pure-annotations';
-import {updatePackageVersion} from './package-versions';
-import {inlinePackageMetadataFiles} from './metadata-inlining';
-import {createTypingsReexportFile} from './typings-reexport';
-import {createMetadataReexportFile} from './metadata-reexport';*/
-
-
-
-const {packagesDir, outputDir, projectDir} = config;
+const {packagesDir, outputDir, licenseBanner} = config;
 const bundlesDir = path.join(outputDir, 'bundles');
 
 /* Copy files function */ {
@@ -37,17 +31,28 @@ module.exports = function composeRelease(packageName) {
   const packagePath = path.join(outputDir, 'packages', packageName);
   const releasePath = path.join(outputDir, 'releases', packageName);
 
-  //inlinePackageMetadataFiles(packagePath);
+  inlinePackageMetadataFiles(packagePath);
 
-  copyFiles(packagePath, '**/*.+(d.ts|metadata.json)', join(releasePath, 'typings'));
-  copyFiles(bundlesDir, `${packageName}.umd?(.min).js?(.map)`, join(releasePath, 'bundles'));
-  copyFiles(bundlesDir, `${packageName}?(.es5).js?(.map)`, join(releasePath, '@angular'));
-  copyFiles(projectDir, 'LICENSE', releasePath);
+  copyFiles(packagePath, '**/*.+(d.ts|metadata.json)', path.join(releasePath, 'typings'));
+  copyFiles(bundlesDir, `${packageName}.umd?(.min).js?(.map)`, path.join(releasePath, 'bundles'));
+  copyFiles(bundlesDir, `${packageName}?(.es5).js?(.map)`, path.join(releasePath, '@zuz'));
   copyFiles(packagesDir, 'README.md', releasePath);
   copyFiles(sourcePath, 'package.json', releasePath);
 
-/*  updatePackageVersion(releasePath);
   createTypingsReexportFile(releasePath, packageName);
   createMetadataReexportFile(releasePath, packageName);
-  addPureAnnotationsToFile(path.join(releasePath, '@angular', `${packageName}.es5.js`));*/
+  addPureAnnotationsToFile(path.join(releasePath, '@zuz', `${packageName}.es5.js`));
 };
+
+function createTypingsReexportFile(outputDir, entryName) {
+  writeFileSync(path.join(outputDir, `${entryName}.d.ts`),
+    licenseBanner + '\nexport * from "./typings/index";'
+  );
+}
+
+
+function createMetadataReexportFile(packageDir, packageName) {
+  const metadataReExport =
+    `{"__symbolic":"module","version":3,"metadata":{},"exports":[{"from":"./typings/index"}]}`;
+  writeFileSync(path.join(packageDir, `${packageName}.metadata.json`), metadataReExport, 'utf-8');
+}

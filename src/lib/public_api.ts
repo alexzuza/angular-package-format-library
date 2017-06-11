@@ -1,3 +1,1 @@
-
-
-const t  = 4;
+export * from './test/index';
