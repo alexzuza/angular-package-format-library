@@ -10,7 +10,6 @@ const cleanCss = require('gulp-clean-css');
 const inlineResourcesForDirectory = require('../inline-resources');
 const buildPackageBundles = require('../packaging/build-bundles');
 
-
 const composeRelease = require('../packaging/build');
 
 const tsc = require('@angular/tsc-wrapped');
@@ -27,15 +26,12 @@ const htmlGlob = path.join(packageRoot, '**/*.html');
 const stylesGlob = path.join(packageRoot, '**/*.css');
 
 
-
-
 const htmlMinifierOptions = {
   collapseWhitespace: true,
   removeComments: true,
   caseSensitive: true,
   removeAttributeQuotes: false
 };
-
 
 gulp.task(`build-release:clean`, (done) => runSequence('clean', 'build-release', done));
 
@@ -45,7 +41,8 @@ gulp.task(`build-release:clean`, (done) => runSequence('clean', 'build-release',
 
     gulp.task('prepare-release', ['build']);
 
-      gulp.task(`build`, (done) => runSequence([`build:esm`, `assets`],
+      gulp.task(`build`, (done) => runSequence(
+        [`build:esm`, `assets`],
         // Inline assets into ESM output.
         `assets:inline`,
         // Build bundles on top of inlined ESM output.
