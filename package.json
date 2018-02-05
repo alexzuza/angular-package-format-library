@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "gulp build-release:clean",
+    "test": "node --inspect-brk ./node_modules/gulp/bin/gulp.js build-release:clean",
     "button": "ngc -p ./src/lib/input/tsconfig-build.json"
   },
   "author": "Alexey Zuev",
@@ -20,11 +21,13 @@
   "devDependencies": {
     "@angular/compiler-cli": "5.2.3",
     "fs-extra": "^3.0.1",
+    "glob": "^7.1.2",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-clean-css": "^3.4.1",
     "gulp-htmlmin": "^3.0.0",
     "rollup": "^0.42.0",
+    "rollup-plugin-alias": "^1.4.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1",
     "run-sequence": "^1.2.2",

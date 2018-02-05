@@ -14,7 +14,7 @@ const {platform} = require('os');
  * @param pkg The package for which to get entry points, e.g., 'cdk'.
  * @returns An array of secondary entry-points names, e.g., ['a11y', 'bidi', ...]
  */
-export function getSecondaryEntryPointsForPackage(pkg) {
+function getSecondaryEntryPointsForPackage(pkg) {
   const packageName = pkg.name;
   const packageDir = pkg.sourceDir;
 
@@ -78,7 +78,7 @@ function getBuildOrder(node) {
 }
 
 /** Gets the names of all subdirectories for a given path. */
-export function getSubdirectoryNames(dir) {
+function getSubdirectoryNames(dir) {
   return readdirSync(dir).filter(f => lstatSync(join(dir, f)).isDirectory());
 }
 
@@ -110,12 +110,18 @@ function buildPackageImportStatementFindCommand(searchDirectory, packageName) {
   if (platform() === 'win32') {
     return {
       binary: 'findstr',
-      args: ['/r', `from.'@angular/${packageName}/.*'`, `${searchDirectory}\\*.ts`]
+      args: ['/r', `from.'@zuz/${packageName}/.*'`, `${searchDirectory}\\*.ts`]
     };
   } else {
     return {
       binary: 'grep',
-      args: ['-Eroh', '--include', '*.ts', `from '@angular/${packageName}/.+';`, searchDirectory]
+      args: ['-Eroh', '--include', '*.ts', `from '@zuz/${packageName}/.+';`, searchDirectory]
     };
   }
 }
+
+
+module.exports = {
+  getSecondaryEntryPointsForPackage: getSecondaryEntryPointsForPackage,
+  getSubdirectoryNames: getSubdirectoryNames
+};

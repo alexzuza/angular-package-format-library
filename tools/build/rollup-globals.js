@@ -1,10 +1,18 @@
-const buildConfig = require('../../build-config');
-const fs = require('fs');
-const rollup = require('rollup');
-const rollupNodeResolutionPlugin = require('rollup-plugin-node-resolve');
-const uglify = require('rollup-plugin-uglify');
+const {join} = require('path');
+const {getSubdirectoryNames} = require('./secondary-entry-points');
+const {packagesDir} = require('../../build-config');
+const libSecondaryEntryPoints = getSubdirectoryNames(join(packagesDir, 'lib'));
 
-const ROLLUP_GLOBALS = {
+
+const dashCaseToCamelCase = (str) => str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+
+/** Object with all material entry points in the format of Rollup globals. */
+const rollupLibEntryPoints = libSecondaryEntryPoints.reduce((globals, entryPoint) => {
+  globals[`@zuz/lib/${entryPoint}`] = `ng.zuz.${dashCaseToCamelCase(entryPoint)}`;
+  return globals;
+}, {});
+
+const rollupGlobals = {
   // Import tslib rather than having TypeScript output its helpers multiple times.
   // See https://github.com/Microsoft/tslib
   'tslib': 'tslib',
@@ -20,8 +28,8 @@ const ROLLUP_GLOBALS = {
   '@angular/platform-browser/animations': 'ng.platformBrowser.animations',
 
   // Local Angular packages inside of Material.
-  '@zuz/lib': 'zuz.lib',
-
+  '@zuz/lib': 'ng.lib',
+  ...rollupLibEntryPoints,
 
   // Rxjs dependencies
   'rxjs/BehaviorSubject': 'Rx',
@@ -50,37 +58,8 @@ const ROLLUP_GLOBALS = {
   'rxjs/add/operator/toPromise': 'Rx.Observable.prototype',
 };
 
-/** Creates a rollup bundle of a specified JavaScript file.*/
-module.exports = function createRollupBundle(config) {
-  const bundleOptions = {
-    context: 'this',
-    external: Object.keys(ROLLUP_GLOBALS),
-    entry: config.entry
-  };
 
-  const writeOptions = {
-    // Keep the moduleId empty because we don't want to force developers to a specific moduleId.
-    moduleId: '',
-    moduleName: config.moduleName,
-    banner: buildConfig.licenseBanner,
-    format: config.format,
-    dest: config.dest,
-    globals: ROLLUP_GLOBALS,
-    sourceMap: true
-  };
-
-  // When creating a UMD, we want to exclude tslib from the `external` bundle option so that it
-  // is inlined into the bundle.
-  if (config.format === 'umd') {
-    bundleOptions.plugins = [rollupNodeResolutionPlugin()];
-    if(config.minify) {
-      bundleOptions.plugins.push(uglify({}));
-    }
-
-    const external = Object.keys(ROLLUP_GLOBALS);
-    external.splice(external.indexOf('tslib'), 1);
-    bundleOptions.external = external;
-  }
-
-  return rollup.rollup(bundleOptions).then((bundle) => bundle.write(writeOptions));
-}
+module.exports = {
+  rollupGlobals,
+  dashCaseToCamelCase
+};
