@@ -4,25 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "gulp build-release:clean"
+    "start": "gulp build-release:clean",
+    "button": "ngc -p ./src/lib/input/tsconfig-build.json"
   },
   "author": "Alexey Zuev",
   "license": "MIT",
   "dependencies": {
-    "@angular/common": "4.2.1",
-    "@angular/compiler": "4.2.1",
-    "@angular/core": "4.2.1",
-    "@angular/platform-browser": "4.2.1",
+    "@angular/common": "5.2.3",
+    "@angular/compiler": "5.2.3",
+    "@angular/core": "5.2.3",
     "core-js": "^2.4.1",
     "rxjs": "^5.4.0",
-    "systemjs": "0.19.43",
-    "tslib": "^1.7.1",
     "zone.js": "^0.8.12"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "4.2.1",
-    "@angular/platform-browser-dynamic": "4.2.1",
-
+    "@angular/compiler-cli": "5.2.3",
     "fs-extra": "^3.0.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
@@ -34,6 +30,6 @@
     "run-sequence": "^1.2.2",
     "sorcery": "^0.10.0",
     "tslint": "^5.4.3",
-    "typescript": "^2.3.4"
+    "typescript": "2.6.x"
   }
 }

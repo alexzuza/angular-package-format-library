@@ -54,4 +54,4 @@ module.exports = function inlinePackageMetadataFiles(packagePath) {
     inlineMetadataResources(metadata, componentResources);
     writeFileSync(path , JSON.stringify(metadata), 'utf-8');
   });
-}
+};

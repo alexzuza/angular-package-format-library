@@ -84,4 +84,5 @@ module.exports = function buildPackageBundles(entryFile, packageName) {
             return Promise.all(bundles)
               .then(() => console.log('All bundles generated successfully.'))
           });
-}
+};
+
