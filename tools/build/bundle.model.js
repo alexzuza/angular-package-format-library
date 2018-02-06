@@ -8,9 +8,6 @@ const rollupAlias = require('rollup-plugin-alias');
 const bundlesDir = join(outputDir, 'bundles');
 const {rollupGlobals, dashCaseToCamelCase} = require('./rollup-globals');
 
-
-
-
 class PackageBundler {
   constructor(buildPackage) {
     this.buildPackage = buildPackage;

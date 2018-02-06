@@ -12,6 +12,7 @@ const buildLicense = `/**
   */`;
 
 module.exports = {
+  namespace: '@zuz',
   projectVersion: buildVersion,
   angularVersion: angularVersion,
   projectDir: __dirname,

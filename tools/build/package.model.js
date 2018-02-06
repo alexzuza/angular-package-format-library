@@ -1,10 +1,10 @@
-const {spawn} = require('child_process');
-const path =  require('path');
-const {join} = path;
+const { spawn } = require('child_process');
+const path = require('path');
+const { join } = path;
 
 const PackageBundler = require('./bundle.model');
-const {getSecondaryEntryPointsForPackage} = require('./secondary-entry-points');
-const {packagesDir, outputDir} = require('../../build-config');
+const { getSecondaryEntryPointsForPackage } = require('./secondary-entry-points');
+const { packagesDir, outputDir } = require('../../build-config');
 
 const buildTsconfigName = 'tsconfig-build.json';
 
@@ -21,8 +21,9 @@ class PackageModel {
     return this._secondaryEntryPoints;
   }
 
-  constructor(name) {
+  constructor(namespace, name) {
     this.name = name;
+    this.namespace = namespace;
     this.sourceDir = join(packagesDir, name);
     this.outputDir = join(outputDir, 'packages', name);
     this.esm5OutputDir = join(outputDir, 'packages', name, 'esm5');
@@ -89,7 +90,7 @@ async function compileEntryPoint(buildPackage, tsconfigName, secondaryEntryPoint
 function ngcCompile(flags) {
   return new Promise((resolve, reject) => {
     const ngcPath = path.resolve('./node_modules/.bin/ngc');
-    const childProcess = spawn(ngcPath, flags, {shell: true});
+    const childProcess = spawn(ngcPath, flags, { shell: true });
 
     // Pipe stdout and stderr from the child process.
     childProcess.stdout.on('data', (data) => console.log(`${data}`));

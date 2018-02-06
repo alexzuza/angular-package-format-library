@@ -10,7 +10,7 @@ const config = require('./build-config');
 const inlineResourcesForDirectory = require('./tools/inline-resources');
 const composeRelease = require('./tools/build/build');
 
-const { packagesDir, outputDir } = config;
+const { packagesDir, outputDir, packageName, namespace } = config;
 
 const packageRoot = path.join(packagesDir, 'lib');
 const packageOut = path.join(outputDir, 'packages', 'lib');
@@ -26,7 +26,7 @@ const htmlMinifierOptions = {
   removeAttributeQuotes: false
 };
 
-const pkg = new PackageModel('lib');
+const pkg = new PackageModel(namespace, packageName);
 pkg.exportsSecondaryEntryPointsAtRoot = true;
 
 

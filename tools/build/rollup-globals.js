@@ -8,7 +8,7 @@ const dashCaseToCamelCase = (str) => str.replace(/-([a-z])/g, (g) => g[1].toUppe
 
 /** Object with all material entry points in the format of Rollup globals. */
 const rollupLibEntryPoints = libSecondaryEntryPoints.reduce((globals, entryPoint) => {
-  globals[`@zuz/lib/${entryPoint}`] = `ng.zuz.${dashCaseToCamelCase(entryPoint)}`;
+  globals[`@zuz/lib/${entryPoint}`] = `ng.lib.${dashCaseToCamelCase(entryPoint)}`;
   return globals;
 }, {});
 
