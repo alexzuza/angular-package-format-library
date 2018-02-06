@@ -26,17 +26,20 @@ const htmlMinifierOptions = {
   removeAttributeQuotes: false
 };
 
-const pkg = new PackageModel(namespace, packageName);
-pkg.exportsSecondaryEntryPointsAtRoot = true;
+const pkg = new PackageModel(namespace, packageName, true);
 
 
-gulp.task(`build-release:clean`, (done) => runSequence('clean', 'build-release', done));
+
+gulp.task(`build-release:clean`, (done) => runSequence(
+  'clean',
+  'build-release',
+  done));
 
   gulp.task('clean', () => gulp.src(outputDir, { read: false }).pipe(gulpClean(null)));
 
-  gulp.task('build-release', ['prepare-release'], () =>  composeRelease(pkg));
+  gulp.task('build-library', ['prepare-build'], () => composeRelease(pkg));
 
-    gulp.task('prepare-release', ['build']);
+    gulp.task('prepare-build', ['build']);
 
       gulp.task(`build`, (done) => runSequence(
         `assets`,

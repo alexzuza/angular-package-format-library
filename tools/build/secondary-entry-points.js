@@ -1,7 +1,7 @@
 const {join} = require('path');
 const {readdirSync, lstatSync, existsSync} = require('fs');
 const {spawnSync} = require('child_process');
-
+const {namespace} = require('../../build-config');
 const {platform} = require('os');
 
 
@@ -110,12 +110,12 @@ function buildPackageImportStatementFindCommand(searchDirectory, packageName) {
   if (platform() === 'win32') {
     return {
       binary: 'findstr',
-      args: ['/r', `from.'@zuz/${packageName}/.*'`, `${searchDirectory}\\*.ts`]
+      args: ['/r', `from.'${namespace}/${packageName}/.*'`, `${searchDirectory}\\*.ts`]
     };
   } else {
     return {
       binary: 'grep',
-      args: ['-Eroh', '--include', '*.ts', `from '@zuz/${packageName}/.+';`, searchDirectory]
+      args: ['-Eroh', '--include', '*.ts', `from '${namespace}/${packageName}/.+';`, searchDirectory]
     };
   }
 }

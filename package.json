@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "gulp build-release:clean",
+    "start": "gulp build-library",
     "test": "node --inspect-brk ./node_modules/gulp/bin/gulp.js build-release:clean",
     "button": "ngc -p ./src/lib/input/tsconfig-build.json"
   },

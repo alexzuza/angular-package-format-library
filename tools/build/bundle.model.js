@@ -141,7 +141,7 @@ class PackageBundler {
       if (this.buildPackage.exportsSecondaryEntryPointsAtRoot &&
         config.moduleName === `ng.${this.buildPackage.name}`) {
 
-        const importRegex = new RegExp(`@zuz/${this.buildPackage.name}/.+`);
+        const importRegex = new RegExp(`${this.buildPackage.namespace}/${this.buildPackage.name}/.+`);
         external = external.filter(e => !importRegex.test(e));
 
         // Use the rollup-alias plugin to map imports of the form `@angular/material/button`
@@ -165,7 +165,7 @@ class PackageBundler {
   getResolvedSecondaryEntryPointImportPaths(bundleOutputDir) {
 
     return this.buildPackage.secondaryEntryPoints.reduce((map, p) => {
-      map[`@zuz/${this.buildPackage.name}/${p}`] =
+      map[`${this.buildPackage.namespace}/${this.buildPackage.name}/${p}`] =
         join(dirname(bundleOutputDir), this.buildPackage.name, `${p}.es5.js`);
       return map;
     }, {})

@@ -1,6 +1,6 @@
 const {join} = require('path');
 const {getSubdirectoryNames} = require('./secondary-entry-points');
-const {packagesDir} = require('../../build-config');
+const {packagesDir, namespace, packageName} = require('../../build-config');
 const libSecondaryEntryPoints = getSubdirectoryNames(join(packagesDir, 'lib'));
 
 
@@ -8,7 +8,7 @@ const dashCaseToCamelCase = (str) => str.replace(/-([a-z])/g, (g) => g[1].toUppe
 
 /** Object with all material entry points in the format of Rollup globals. */
 const rollupLibEntryPoints = libSecondaryEntryPoints.reduce((globals, entryPoint) => {
-  globals[`@zuz/lib/${entryPoint}`] = `ng.lib.${dashCaseToCamelCase(entryPoint)}`;
+  globals[`${namespace}/${packageName}/${entryPoint}`] = `ng.${packageName}.${dashCaseToCamelCase(entryPoint)}`;
   return globals;
 }, {});
 
@@ -28,7 +28,7 @@ const rollupGlobals = {
   '@angular/platform-browser/animations': 'ng.platformBrowser.animations',
 
   // Local Angular packages inside of Material.
-  '@zuz/lib': 'ng.lib',
+  [`${namespace}/${packageName}`]: `ng.${packageName}`,
   ...rollupLibEntryPoints,
 
   // Rxjs dependencies

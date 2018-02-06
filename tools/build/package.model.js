@@ -1,14 +1,25 @@
 const { spawn } = require('child_process');
 const path = require('path');
 const { join } = path;
-
-const PackageBundler = require('./bundle.model');
 const { getSecondaryEntryPointsForPackage } = require('./secondary-entry-points');
 const { packagesDir, outputDir } = require('../../build-config');
 
+const PackageBundler = require('./bundle.model');
 const buildTsconfigName = 'tsconfig-build.json';
 
 class PackageModel {
+
+  constructor(namespace, name, exportsSecondaryEntryPointsAtRoot) {
+    this.namespace = namespace;
+    this.name = name;
+    this.sourceDir = join(packagesDir, name);
+    this.outputDir = join(outputDir, 'packages', name);
+    this.esm5OutputDir = join(outputDir, 'packages', name, 'esm5');
+    this.bundler = new PackageBundler(this);
+
+    this.exportsSecondaryEntryPointsAtRoot = !!exportsSecondaryEntryPointsAtRoot;
+    this.entryFilePath = join(this.outputDir, 'index.js');
+  }
 
   get secondaryEntryPointsByDepth() {
     this.cacheSecondaryEntryPoints();
@@ -19,17 +30,6 @@ class PackageModel {
   get secondaryEntryPoints() {
     this.cacheSecondaryEntryPoints();
     return this._secondaryEntryPoints;
-  }
-
-  constructor(namespace, name) {
-    this.name = name;
-    this.namespace = namespace;
-    this.sourceDir = join(packagesDir, name);
-    this.outputDir = join(outputDir, 'packages', name);
-    this.esm5OutputDir = join(outputDir, 'packages', name, 'esm5');
-    this.bundler = new PackageBundler(this);
-
-    this.entryFilePath = join(this.outputDir, 'index.js');
   }
 
   /** Compiles the package sources with all secondary entry points. */

@@ -1,5 +1,5 @@
 const { join, dirname } = require('path');
-const config = require('../../build-config');
+const { packagesDir, outputDir, licenseBanner, angularVersion, projectVersion } = require('../../build-config');
 const { writeFileSync, appendFileSync, readFileSync } = require('fs');
 const { sync } = require('glob');
 const { mkdirpSync, copySync } = require('fs-extra');
@@ -7,7 +7,6 @@ const { platform } = require('os');
 const { spawnSync } = require('child_process');
 const inlinePackageMetadataFiles = require('../metadata-inlining');
 
-const { packagesDir, outputDir, licenseBanner } = config;
 const bundlesDir = join(outputDir, 'bundles');
 
 function copyFiles(fromPath, fileGlob, outDir) {
@@ -18,20 +17,19 @@ function copyFiles(fromPath, fileGlob, outDir) {
   });
 }
 
-
 /**
  * Copies different output files into a folder structure that follows the `angular/angular`
  * release folder structure. The output will also contain a README and the according package.json
  * file. Additionally the package will be Closure Compiler and AOT compatible.
  */
 module.exports = function composeRelease(pkg) {
-  const name = pkg.name;
+  const { name, namespace } = pkg;
 
   // To avoid refactoring of the project the package material will map to the source path `lib/`.
   const sourcePath = join(packagesDir, 'lib');
   const packagePath = join(outputDir, 'packages', name);
   const releasePath = join(outputDir, 'releases', name);
-  const importAsName = `@zuz/${name}`;
+  const importAsName = `${namespace}/${name}`;
 
   inlinePackageMetadataFiles(packagePath);
 
@@ -47,7 +45,6 @@ module.exports = function composeRelease(pkg) {
 
   // Copy ES2015 bundles
   copyFiles(bundlesDir, `${name}.js?(.map)`, join(releasePath, 'esm2015'));
-  debugger
   copyFiles(join(bundlesDir, name), `!(*.es5|*.umd).js?(.map)`, join(releasePath, 'esm2015'));
 
   copyFiles(packagesDir, 'README.md', releasePath);
@@ -104,7 +101,7 @@ function createMetadataReexportFile(destDir, from, entryPointName, importAsName)
 
 /** Creates files necessary for a secondary entry-point. */
 function createFilesForSecondaryEntryPoint(buildPackage, releasePath) {
-  const {name} = buildPackage;
+  const { namespace, name } = buildPackage;
   const packageOut = buildPackage.outputDir;
 
   buildPackage.secondaryEntryPoints.forEach(entryPointName => {
@@ -113,10 +110,10 @@ function createFilesForSecondaryEntryPoint(buildPackage, releasePath) {
     // * An index.d.ts file that re-exports the index.d.ts from the typings/ directory
     // * A metadata.json re-export for this entry-point's metadata.
     const entryPointDir = join(releasePath, entryPointName);
-    const importAsName = `@zuz/${name}/${entryPointName}`;
+    const importAsName = `${namespace}/${name}/${entryPointName}`;
 
     mkdirpSync(entryPointDir);
-    createEntryPointPackageJson(entryPointDir, name, entryPointName);
+    createEntryPointPackageJson(entryPointDir, namespace, name, entryPointName);
 
     // Copy typings and metadata from tsc output location into the entry-point.
     copyFiles(
@@ -136,9 +133,6 @@ function createFilesForSecondaryEntryPoint(buildPackage, releasePath) {
       importAsName);
   });
 }
-
-
-
 
 /** Variable that is set to the string for version placeholders. */
 const versionPlaceholderText = '0.0.0-PLACEHOLDER';
@@ -161,8 +155,8 @@ function replaceVersionPlaceholders(packageDir) {
   // version of the root package.json file.
   files.forEach(filePath => {
     const fileContent = readFileSync(filePath, 'utf-8')
-      .replace(ngVersionPlaceholderRegex, config.angularVersion)
-      .replace(versionPlaceholderRegex, config.projectVersion);
+      .replace(ngVersionPlaceholderRegex, angularVersion)
+      .replace(versionPlaceholderRegex, projectVersion);
 
     writeFileSync(filePath, fileContent);
   });
@@ -192,9 +186,9 @@ function buildPlaceholderFindCommand(packageDir) {
   }
 }
 
-function createEntryPointPackageJson(destDir, packageName, entryPointName) {
+function createEntryPointPackageJson(destDir, namespace, packageName, entryPointName) {
   const content = {
-    name: `@zuz/${packageName}/${entryPointName}`,
+    name: `${namespace}/${packageName}/${entryPointName}`,
     typings: `../${entryPointName}.d.ts`,
     main: `../bundles/${packageName}-${entryPointName}.umd.js`,
     module: `../esm5/${entryPointName}.es5.js`,
