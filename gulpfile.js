@@ -32,7 +32,7 @@ const pkg = new PackageModel(namespace, packageName, true);
 
 gulp.task(`build-release:clean`, (done) => runSequence(
   'clean',
-  'build-release',
+  'build-library',
   done));
 
   gulp.task('clean', () => gulp.src(outputDir, { read: false }).pipe(gulpClean(null)));
